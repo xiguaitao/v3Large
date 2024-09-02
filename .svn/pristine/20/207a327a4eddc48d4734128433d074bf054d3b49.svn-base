@@ -1,0 +1,63 @@
+<template>
+    <div class='Header h-[80px] mb-[24px]'>
+        <div class="Header-bg w-full h-[80px] absolute top-0 left-0"></div>
+        <div class="heder-main px-[77px] py-[16px] flex justify-between box-border">
+            <div class="heder-main-left flex flex-row">
+                <div class="icons  flex flex-row">
+                    <img class="w-[32px] h-[32px] mr-[16px]" v-for="item in imgs" :key="item" :src="item"></img>
+                </div>
+                <div class="flex flex-row text-gray-50">
+                    <div class="mr-[32px]">晴</div>
+                    <div>21~28℃</div>
+                </div>
+            </div>
+            <div class="heder-main-right flex flex-row items-center">
+                <div class="text-[#B0C7D9] flex flex-row text-[20px] mr-[32px]">
+                    <div class="mr-[16px]">{{ currentDate }}</div>
+                    <div>{{ currentDay }}</div>
+                </div>
+                <div class="header-main-right-text text-[#D9F0FF] text-[26px]">{{ currentTime }}</div>
+            </div>
+        </div>
+    </div>
+</template>
+<script lang='ts' setup name='Header'>
+
+const imgs = [
+    new URL('@/assets/imgs/icon-qing.png', import.meta.url).href,
+    new URL('@/assets/imgs/icon-yin.png', import.meta.url).href,
+    new URL('@/assets/imgs/icon-yu.png', import.meta.url).href,
+    new URL('@/assets/imgs/icon-xue.png', import.meta.url).href,
+]
+const currentDate = ref<string>('');
+const currentDay = ref<string>('');
+const currentTime = ref<string>('');
+
+function updateTime() {
+    const now = new Date();
+    currentDate.value = now.toISOString().split('T')[0]; // 获取当前日期
+    currentDay.value = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][now.getDay()]; // 获取当前星期
+    currentTime.value = now.toTimeString().split(' ')[0]; // 获取当前时间
+}
+
+// 初始化时更新时间
+onMounted(() => {
+    updateTime();
+    const intervalId = setInterval(updateTime, 1000); // 每秒更新时间
+    onUnmounted(() => clearInterval(intervalId)); // 组件卸载时清除定时器
+});
+</script>
+<style lang='scss' scoped>
+.Header {
+    .Header-bg {
+        background: url('@/assets/imgs/bg-tito.png') no-repeat;
+        background-size: 100% 100%;
+        background-position: center;
+
+    }
+
+    .header-main-right-text {
+        text-shadow: 0px 0px 10px #0091FF, 0px 0px 4px #0091FF;
+    }
+}
+</style>

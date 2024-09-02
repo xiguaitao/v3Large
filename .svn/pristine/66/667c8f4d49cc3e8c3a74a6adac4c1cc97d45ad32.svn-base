@@ -1,0 +1,7 @@
+<template>
+    <div class='index'>
+        商城大屏
+    </div>
+</template>
+<script lang='ts' setup name='shoppingMallScreen'></script>
+<style lang='scss' scoped></style>

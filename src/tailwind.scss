@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .bg-white {
+        background: white;
+    }
+
+    .text-shadow {
+        text-shadow: 0px 0px 10px #0091FF, 0px 0px 4px #0091FF;
+    }
+
+
+}

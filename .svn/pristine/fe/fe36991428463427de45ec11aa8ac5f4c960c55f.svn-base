@@ -1,0 +1,443 @@
+<template>
+    <div class="index w-full h-full flex flex-row overflow-auto  ">
+        <div class="index-left  w-[432px] pl-[32px] box-border  flex flex-col">
+            <CardX class="flex-[1.3] h-full " title="全国各省售后统计">
+                <ListX v-for="item in list" :key="item.id" :title="item.name" :incomplete="item.num"
+                    :total="item.incomplete" :percentage="item.width">
+                </ListX>
+            </CardX>
+            <CardX class="flex-1" title="产品售后统计">
+                <div class="w-full h-full  flex flex-col">
+                    <div class="flex flex-row justify-end text-[#D9F0FF] py-[16px]">
+                        <div class="mr-[8px] bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近3个月
+                        </div>
+                        <div class="mr-[8px] bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近半年
+                        </div>
+                        <div class="bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近1年</div>
+                    </div>
+                    <div class="flex-1">
+                        <AfterSalesStatisticsByProvince></AfterSalesStatisticsByProvince>
+                    </div>
+                </div>
+            </CardX>
+        </div>
+
+        <div class="index-middle flex-1 relative">
+            <div class="absolute top-0 left-0 w-full h-full px-[32px] box-border pb-[88px]">
+                <Map></Map>
+            </div>
+            <div class="absolute top-0 left-0 w-full h-full flex flex-col pointer-events-none">
+                <!-- 横向tab -->
+                <div class="grid grid-cols-5 gap-[24px] px-[32px] box-border">
+
+                    <div class="flex flex-row  " v-for="item in list1" :key="item.id">
+                        <div class="w=[64px] h-[64px]">
+                            <img class="w-full h-full" :src="item.img" />
+                        </div>
+                        <div
+                            class="bg-[url('@/assets/imgs/bg-1.png')] bg-[100%,100%] flex-1 flex justify-center items-center flex-col">
+                            <div class="text-shadow text-[30px] text-[#D9F0FF]">{{ item.number }}</div>
+                            <div class="text-[16px] text-[#A3BCCC]">{{ item.name }}</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 竖向tab -->
+                <div class="flex-1 px-[32px] pb-[48px] relative">
+                    <div class="absolute right-[32px] bottom-0">
+                        <div class="min-w-[198px] mb-[24px] bg flex" v-for="item in list2" :key="item.id">
+                            <div class="flex-1 pr-[24px] box-border text-end">
+                                <div class="text-[30px] text-[#D9F0FF]">{{ item.number }}</div>
+                                <div class="text-[16px] text-[#A3BCCC]">{{ item.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 底部 -->
+                <div class="h-[88px]"></div>
+            </div>
+        </div>
+        <div class="index-right w-[432px] pr-[32px] box-border flex flex-col">
+            <CardX class="flex-1" title="今日服务">
+                <el-table :data="tableData" height="100%" row-class-name="custom-hover-row">
+                    <el-table-column prop="date" label="售后编号" width="auto" />
+                    <el-table-column prop="type" label="售后类型" width="auto" />
+                    <el-table-column prop="name" label="客户名字" width="auto" />
+                    <el-table-column prop="phone" label="联系电话" width="auto" />
+                    <el-table-column prop="state" label="售后状态" width="auto" />
+                </el-table>
+            </CardX>
+            <CardX class="flex-1" title="服务类型分析">
+                <div class="w-full h-full  flex flex-col">
+                    <div class="flex flex-row justify-end text-[#D9F0FF] py-[16px]">
+                        <div class="mr-[8px] bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近3个月
+                        </div>
+                        <div class="mr-[8px] bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近半年
+                        </div>
+                        <div class="bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近1年</div>
+                    </div>
+                    <div class="flex-1">
+                        <ServiceTypeAnalysis></ServiceTypeAnalysis>
+                    </div>
+                </div>
+            </CardX>
+            <CardX class="flex-1" title="售后服务总数">
+                <div class="w-full h-full  flex flex-col">
+                    <div class="flex flex-row justify-end text-[#D9F0FF] py-[16px]">
+                        <div class="mr-[8px] bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近3个月
+                        </div>
+                        <div class="mr-[8px] bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近半年
+                        </div>
+                        <div class="bg-m py-[2px] px-[10px] box-border text-[12px] cursor-pointer">近1年</div>
+                    </div>
+                    <div class="flex-1">
+                        <TotalNumberOfAfterSalesService></TotalNumberOfAfterSalesService>
+                    </div>
+                </div>
+            </CardX>
+        </div>
+    </div>
+</template>
+<script lang='ts' setup name='serviceScreens'>
+import type { list, list1, list2 } from './index.ts';
+import Header from "@/components/Header.vue";
+import CardX from "@/components/CardX.vue";
+import ListX from "@/components/ListX.vue";
+import AfterSalesStatisticsByProvince from "./components/AfterSalesStatisticsByProvince.vue";
+import ServiceTypeAnalysis from "./components/ServiceTypeAnalysis.vue";
+import TotalNumberOfAfterSalesService from "./components/TotalNumberOfAfterSalesService.vue";
+import Map from "./components/Map.vue";
+
+
+const app = createApp({});
+app.component('Header', Header)
+    .component('CardX', CardX)
+    .component('AfterSalesStatisticsByProvince', AfterSalesStatisticsByProvince)
+    .component('ServiceTypeAnalysis', ServiceTypeAnalysis)
+    .component('TotalNumberOfAfterSalesService', ServiceTypeAnalysis)
+    .component('Map', Map)
+    .component('ListX', ListX);
+
+
+
+const list1 = ref<list1[]>([
+    {
+        id: 0,
+        name: "服务总数",
+        number: 3562,
+        img: new URL('@/assets/imgs/icon-1.png', import.meta.url).href,
+    },
+    {
+        id: 1,
+        name: "未完成售后数",
+        number: 3562,
+        img: new URL('@/assets/imgs/icon-2.png', import.meta.url).href,
+    },
+    {
+        id: 2,
+        name: "待装机数",
+        number: 3562,
+        img: new URL('@/assets/imgs/icon-3.png', import.meta.url).href,
+    },
+    {
+        id: 3,
+        name: "待更换滤芯数",
+        number: 3562,
+        img: new URL('@/assets/imgs/icon-4.png', import.meta.url).href,
+    },
+    {
+        id: 4,
+        name: "已完成服务数",
+        number: 3562,
+        img: new URL('@/assets/imgs/icon-5.png', import.meta.url).href,
+    },
+])
+const list2 = ref<list2[]>([
+    {
+        id: 0,
+        name: "今日服务总数",
+        number: 3562,
+
+    },
+    {
+        id: 1,
+        name: "今日安装数",
+        number: 3562,
+
+    },
+    {
+        id: 2,
+        name: "今日售后数",
+        number: 3562,
+
+    },
+    {
+        id: 3,
+        name: "今日待完成服务总数",
+        number: 3562,
+
+    },
+])
+
+
+const tableData = ref([
+    {
+        date: "BHQ001",
+        type: "水机安装",
+        name: "赵宇轩",
+        phone: "13259547585",
+        state: "待接单",
+    },
+    {
+        date: "BHQ001",
+        type: "水机安装",
+        name: "赵宇轩",
+        phone: "13259547585",
+        state: "待接单",
+    },])
+
+const list = ref<list[]>([
+    {
+        id: 0,
+        name: "广东省",
+        num: 3562,
+        incomplete: 2562,
+        width: 0,
+    },
+    {
+        id: 1,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+
+        width: 0,
+    },
+    {
+        id: 2,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+
+        width: 0,
+    },
+    {
+        id: 3,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 4,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 5,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 6,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 7,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 8,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 9,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 10,
+        name: "广东省",
+        num: 3562,
+        incomplete: 2500,
+        width: 0,
+    },
+    {
+        id: 11,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 12,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 12,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 12,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 12,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 12,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+    {
+        id: 12,
+        name: "广东省",
+        num: 3562,
+        incomplete: 500,
+        width: 0,
+    },
+])
+
+
+
+
+</script>
+<style lang='scss' scoped>
+.bg {
+    background: linear-gradient(90deg, rgba(0, 213, 255, 0) 0%, rgba(0, 213, 255, .4) 100%);
+
+    &::after {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 74px;
+        background: #05D2FA;
+    }
+}
+
+:deep(.el-table--fit) {
+    background: transparent;
+
+}
+
+:deep(.el-table th.el-table__cell) {
+    background: #2a4460 !important;
+    height: 28px !important;
+    padding: 0 !important;
+
+    .cell {
+        height: 28px;
+        line-height: 28px;
+        font-family: PingFang SC, PingFang SC;
+        font-weight: 400;
+        font-size: 12px;
+        color: #738a99;
+    }
+}
+
+:deep(.el-table .el-table__cell) {
+    padding: 0 !important;
+}
+
+:deep(.el-table td.el-table__cell),
+.el-table th.el-table__cell.is-lea {
+    border: none;
+}
+
+:deep(.el-table__body) {
+    height: 100%;
+    width: auto !important;
+}
+
+:deep(.el-table__header) {
+    width: auto !important;
+}
+
+:deep(.el-table__cell.is-leaf) {
+    border: none;
+}
+
+:deep(.el-table td.el-table__cell),
+:deep(.el-table th.el-table__cell.is-leaf) {
+    border-bottom: 0;
+}
+
+:deep(.el-table::before) {
+    content: none;
+}
+
+:deep(.el-table__inner-wrapper::before) {
+    background: transparent
+}
+
+:deep(.el-table tr) {
+    background: #1a283b !important;
+    height: 28px !important;
+    padding: 0 !important;
+
+    .cell {
+        height: 28px;
+        line-height: 28px;
+        font-family: PingFang SC, PingFang SC;
+        font-weight: 400;
+        font-size: 12px;
+        color: #a3bccc;
+    }
+}
+
+:deep(.el-table--enable-row-hover .el-table__body tr:hover>td.el-table__cell) {
+    background: none;
+}
+
+:deep(.el-table .custom-hover-row:hover) {
+    background: linear-gradient(270deg,
+            #162a3f 0%,
+            rgba(105, 179, 244, 0.8) 100%) !important;
+    color: red !important;
+    /* 使用 !important 来覆盖默认样式 */
+    font-size: 16px !important;
+
+    /* 使用 !important 来覆盖默认样式 */
+    .cell {
+        font-size: 14px;
+        color: #d9f0ff;
+    }
+}
+
+.index {
+    .bg-m {
+        background: linear-gradient(180deg, rgba(21, 86, 162, 0) 0%, rgba(21, 86, 162, 0.95) 100%);
+        border-radius: 0px 0px 0px 0px;
+        border: 1px solid rgba(25, 119, 229, 0.8);
+    }
+
+}
+</style>

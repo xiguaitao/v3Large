@@ -1,0 +1,11 @@
+import axios from "../../../../api/index.ts";
+export const getAfterSaleData = () => {
+  return axios.get("/water-platform-admin-api/display/aftersales/getData");
+};
+// /water-platform-originators-api/display/aftersales/getAftersalesProductCount
+export const getAfterSaleProductCount = (data) => {
+  return axios.get(
+    "/water-platform-admin-api/display/aftersales/getAftersalesProductCount",
+    data
+  );
+};

@@ -1,0 +1,21 @@
+import axios from "../../../../api/index.ts";
+// /water-platform-originators-api/display/mall/getData
+export const getTodayOrder = () => {
+  return axios.get("/water-platform-admin-api/display/mall/getData");
+};
+
+// 用户新增
+export const getCustomerAddStatistics = (data) => {
+  return axios.get(
+    "/water-platform-admin-api/display/mall/getCustomerAddStatistics",
+    data
+  );
+};
+
+// 获取销售趋势分析数据
+export const getGoodsOrderMoneyStatistics = (data) => {
+  return axios.get(
+    "/water-platform-admin-api/display/mall/getGoodsOrderMoneyStatistics",
+    data
+  );
+};

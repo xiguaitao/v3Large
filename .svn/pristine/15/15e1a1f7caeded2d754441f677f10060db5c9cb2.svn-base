@@ -1,0 +1,42 @@
+
+import { RouteRecordRaw } from "vue-router";
+// 导出
+const title="白河泉"
+const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    redirect: '/home',
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: () => import('@/views/home/index.vue'),
+    redirect: '/home/serviceScreens',
+    children: [
+      {
+        path: 'serviceScreens',
+        name: 'serviceScreens',
+        component: () => import('@/views/home/serviceScreens/index.vue'),
+        meta: {
+          keepAlive: false,
+          title:title+"-服务大屏"
+        }
+      },
+      {
+        path: 'shoppingMallScreen',
+        name: 'shoppingMallScreen',
+        component: () => import('@/views/home/shoppingMallScreen/index.vue'),
+        meta: {
+          keepAlive: false,
+          title:title+"-商城大屏"
+        }
+      },
+    ]
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/home',
+  },
+ 
+]
+export default routes;
